@@ -7,19 +7,12 @@
 # otherwise they lose the cost of flipping the coin
 
 import random
+from game_parameters import PRIOR, P, REWARD, PENALTY, COST
 
 def play_coin_game(decision_function = None):
-    # probability of heads for a biased coin
-    BIASED_PROBABILITY = 0.7
-
-    # reward for guessing correctly
-    REWARD = 5
-
-    # cost of flipping the coin
-    COST = 1
 
     # probability of a biased coin is 0.5
-    biased = random.random() < 0.5
+    biased = random.random() < PRIOR
 
     # track the state of the game
     balance = 0
@@ -35,7 +28,7 @@ def play_coin_game(decision_function = None):
 
         # Simulate flipping the coin
         if biased:
-            heads = random.random() < BIASED_PROBABILITY
+            heads = random.random() < P
         else:
             heads = random.random() < 0.5
         
@@ -65,11 +58,17 @@ def play_coin_game(decision_function = None):
         while (guess := input("Is the coin biased or unbiased? (biased/unbiased)")) not in ["biased", "unbiased"]:
             print("Invalid input. Please enter 'biased' or 'unbiased'.\n")
     
-    if (guess == "biased" and biased) or (guess == "unbiased" and not biased):
+    if (guess == "biased" and biased):
         balance += REWARD
-        print(f"You guessed correctly! Your net reward is {balance}.\n")
+        print(f"You guessed correctly: the coin was biased! Your net reward is {balance}.\n")
+    elif (guess == "unbiased" and not biased):
+        balance += REWARD
+        print(f"You guessed correctly: the coin was unbiased! Your net reward is {balance}.\n")
+    elif (guess == "biased" and not biased):
+        balance -= PENALTY
+        print(f"You guessed incorrectly: the coin was unbiased. Your net reward is {balance}.\n")
     else:
-        balance -= REWARD
-        print(f"You guessed incorrectly. Your net reward is {balance}.\n")
+        balance -= PENALTY
+        print(f"You guessed incorrectly: the coin was biased. Your net reward is {balance}.\n")
     
     return balance
